@@ -3,7 +3,8 @@
 # Distributed under the Boost Software License, Version 1.0.
 # https://www.boost.org/LICENSE_1_0.txt
 
-cmake_minimum_required(VERSION 3.5...3.31)
+# We support CMake 3.5, but prefer 4.3 policies and behavior
+cmake_minimum_required(VERSION 3.5...4.3)
 
 project(boost_core VERSION "${BOOST_SUPERPROJECT_VERSION}" LANGUAGES CXX)
 
@@ -16,20 +17,120 @@ if (BOOST_USE_MODULES)
   target_compile_features(boost_core PUBLIC cxx_std_23)
   set_target_properties(boost_core PROPERTIES CXX_MODULE_STD 1)
   target_compile_definitions(boost_core PUBLIC BOOST_USE_MODULES)
-
 else()
   add_library(boost_core INTERFACE)
   set(__scope INTERFACE)
 endif()
 
 add_library(Boost::core ALIAS boost_core)
-target_include_directories(boost_core ${__scope} include)
 target_link_libraries(boost_core
   ${__scope}
     Boost::assert
     Boost::config
     Boost::throw_exception
 )
+# -----------------------------------------------------------------------------
+# Include headers
+# -----------------------------------------------------------------------------
+if(NOT BOOST_USE_MODULES)
+  target_include_directories(boost_core INTERFACE include)
+endif()
+
+# usablele if starting with cmake v3.23
+if(NOT CMAKE_VERSION VERSION_LESS 3.23)
+  target_sources(
+    boost_core
+    PUBLIC
+      FILE_SET headers_public
+        TYPE HEADERS
+        BASE_DIRS include
+        FILES
+          include/boost/checked_delete.hpp
+          include/boost/core/addressof.hpp
+          include/boost/core/alignof.hpp
+          include/boost/core/alloc_construct.hpp
+          include/boost/core/allocator_access.hpp
+          include/boost/core/allocator_traits.hpp
+          include/boost/core/bit.hpp
+          include/boost/core/checked_delete.hpp
+          include/boost/core/cmath.hpp
+          include/boost/core/data.hpp
+          include/boost/core/default_allocator.hpp
+          include/boost/core/demangle.hpp
+          include/boost/core/detail/assert.hpp
+          include/boost/core/detail/demangle_cxxabi.hpp
+          include/boost/core/detail/intrin.hpp
+          include/boost/core/detail/is_same.hpp
+          include/boost/core/detail/lwt_unattended.hpp
+          include/boost/core/detail/minstd_rand.hpp
+          include/boost/core/detail/modules.hpp
+          include/boost/core/detail/sp_thread_pause.hpp
+          include/boost/core/detail/sp_thread_sleep.hpp
+          include/boost/core/detail/sp_thread_yield.hpp
+          include/boost/core/detail/sp_win32_sleep.hpp
+          include/boost/core/detail/splitmix64.hpp
+          include/boost/core/detail/static_assert.hpp
+          include/boost/core/detail/string_view.hpp
+          include/boost/core/empty_value.hpp
+          include/boost/core/enable_if.hpp
+          include/boost/core/exchange.hpp
+          include/boost/core/explicit_operator_bool.hpp
+          include/boost/core/fclose_deleter.hpp
+          include/boost/core/first_scalar.hpp
+          include/boost/core/functor.hpp
+          include/boost/core/identity.hpp
+          include/boost/core/ignore_unused.hpp
+          include/boost/core/invoke_swap.hpp
+          include/boost/core/is_same.hpp
+          include/boost/core/launder.hpp
+          include/boost/core/lightweight_test.hpp
+          include/boost/core/lightweight_test_trait.hpp
+          include/boost/core/make_span.hpp
+          include/boost/core/max_align.hpp
+          include/boost/core/memory_resource.hpp
+          include/boost/core/no_exceptions_support.hpp
+          include/boost/core/noinit_adaptor.hpp
+          include/boost/core/noncopyable.hpp
+          include/boost/core/null_deleter.hpp
+          include/boost/core/nvp.hpp
+          include/boost/core/pointer_in_range.hpp
+          include/boost/core/pointer_traits.hpp
+          include/boost/core/quick_exit.hpp
+          include/boost/core/ref.hpp
+          include/boost/core/scoped_enum.hpp
+          include/boost/core/serialization.hpp
+          include/boost/core/size.hpp
+          include/boost/core/snprintf.hpp
+          include/boost/core/span.hpp
+          include/boost/core/swap.hpp
+          include/boost/core/type_name.hpp
+          include/boost/core/typeinfo.hpp
+          include/boost/core/uncaught_exceptions.hpp
+          include/boost/core/underlying_type.hpp
+          include/boost/core/use_default.hpp
+          include/boost/core/verbose_terminate_handler.hpp
+          include/boost/core/yield_primitives.hpp
+          include/boost/detail/iterator.hpp
+          include/boost/detail/lightweight_test.hpp
+          include/boost/detail/no_exceptions_support.hpp
+          include/boost/detail/scoped_enum_emulation.hpp
+          include/boost/detail/sp_typeinfo.hpp
+          include/boost/get_pointer.hpp
+          include/boost/is_placeholder.hpp
+          include/boost/iterator.hpp
+          include/boost/non_type.hpp
+          include/boost/noncopyable.hpp
+          include/boost/ref.hpp
+          include/boost/swap.hpp
+          include/boost/type.hpp
+          include/boost/utility/addressof.hpp
+          include/boost/utility/enable_if.hpp
+          include/boost/utility/explicit_operator_bool.hpp
+          include/boost/utility/swap.hpp
+          include/boost/visit_each.hpp
+  )
+endif()
+
 
 if(NOT CMAKE_VERSION VERSION_LESS 3.19 AND CMAKE_GENERATOR MATCHES "Visual Studio")
 
